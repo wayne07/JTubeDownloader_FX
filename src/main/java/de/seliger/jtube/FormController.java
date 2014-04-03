@@ -5,6 +5,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -18,6 +20,8 @@ import java.util.ResourceBundle;
  * Created by js on 03.04.14.
  */
 public class FormController implements Initializable {
+
+    private static final Logger LOGGER = Logger.getLogger(FormController.class);
 
     public static final DateTimeFormatter MILLIS_FORMATTER = DateTimeFormat.forPattern("yyyyMMddHHmmssSSS").withLocale(Locale.GERMAN);
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyyMMdd").withLocale(Locale.GERMAN);
@@ -35,15 +39,14 @@ public class FormController implements Initializable {
 
     @FXML
     private void doDownload(MouseEvent event) {
-         System.out.println("hallooo  WELT .........");
+        LOGGER.debug("hallooo  WELT .........");
         // do download
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         String userHome = System.getProperty("user.home");
-        String targetDirectoryString = createTargetDirectory(userHome);
-        targetDirectory.setText(targetDirectoryString);
+        targetDirectory.setText(createTargetDirectory(userHome));
 
     }
 
@@ -55,3 +58,12 @@ public class FormController implements Initializable {
         return target.getAbsolutePath();
     }
 }
+
+/*
+#!/bin/bash
+x=~/tmp/youtube/youtube-dl-$RANDOM-$RANDOM.flv
+youtube-dl --output=$x --format=18 "$1"
+ffmpeg -i $x -acodec libmp3lame -ac 2 -ab 128k -vn -y "$2"
+rm $x
+
+ */
