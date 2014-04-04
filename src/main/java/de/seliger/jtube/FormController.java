@@ -44,19 +44,25 @@ public class FormController implements Initializable {
     @FXML
     private Button btnDownload;
 
+    private String workdir;
+
     @FXML
     private void doDownload(MouseEvent event) {
         LOGGER.debug("starting Download ...");
         // do download
         File tempFile = createTempFileName();
         doDownloadToTempFile(tempFile, urlToSave.getText());
-        extractAudioFrom(tempFile);
+        extractAudioFrom(tempFile, filename.getText(), targetDirectory.getText());
         deleteTempFile(tempFile);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        targetDirectory.setText(createTargetDirectory(getUserHome()));
+        this.workdir = createTargetDirectory(getUserHome());
+
+        targetDirectory.setText(workdir);
+        urlToSave.setText("http://www.youtube.com/watch?v=COHQuu9Flho");
+        filename.setText("BROILERS - Ist Da Jemand");
     }
 
     private String getUserHome() {
@@ -83,13 +89,36 @@ public class FormController implements Initializable {
         return new File(name);
     }
 
-    private void extractAudioFrom(File tempFileName) {
-        String command = "ffmpeg -i $x -acodec libmp3lame -ac 2 -ab 128k -vn -y \"$2\"";
+    private void extractAudioFrom(File tempFile, String filenameToSave, String targetDir) {
+//        String command = "ffmpeg -i $x -acodec libmp3lame -ac 2 -ab 128k -vn -y \"$2\"";
+        String finalFileName = String.format("'%s%s%s.mp3'", targetDir, separator, filenameToSave);
+        LOGGER.debug("finalFileName: " + finalFileName);
 
+        String[] cmdarray = new String[12];
+        cmdarray[0] = "ffmpeg";
+        cmdarray[1] = "-i";
+        cmdarray[2] = tempFile.getAbsolutePath();
+        cmdarray[3] = "-acodec";
+        cmdarray[4] = "libmp3lame";
+        cmdarray[5] = "-ac";
+        cmdarray[6] = "2";
+        cmdarray[7] = "-ab";
+        cmdarray[8] = "128k";
+        cmdarray[9] = "-vn";
+        cmdarray[10] = "-y";
+        cmdarray[11] = finalFileName;
+        try {
+            executeProcess(cmdarray);
+        } catch (IOException e) {
+            LOGGER.error("Fehler: " + e.getMessage(), e);
+            JOptionPane.showMessageDialog(null, "Das Programm 'ffmpeg' wird benötigt. Bitte Papa rufen ;-) ");
+        } catch (InterruptedException e) {
+            LOGGER.error("Fehler: " + e.getMessage(), e);
+        }
     }
 
     private void doDownloadToTempFile(File tempFile, String urlToFileDownload) {
-        String command = "youtube-dl --output=" + tempFile.getAbsolutePath() + " --format=18 \"" + urlToFileDownload + "\"";
+//        String command = "youtube-dl --output=" + tempFile.getAbsolutePath() + " --format=18 \"" + urlToFileDownload + "\"";
         String[] cmdarray = new String[4];
         cmdarray[0] = "youtube-dl";
         cmdarray[1] = "--output=" + tempFile.getAbsolutePath();
@@ -103,13 +132,12 @@ public class FormController implements Initializable {
         } catch (InterruptedException e) {
             LOGGER.error("Fehler: " + e.getMessage(), e);
         }
-
     }
 
     private void executeProcess(String[] cmdarray) throws IOException, InterruptedException {
         String commandAsString= Joiner.on(" ").join(cmdarray);
         LOGGER.info("executing command: " + commandAsString);
-        Process process = Runtime.getRuntime().exec(cmdarray);
+        Process process = Runtime.getRuntime().exec(cmdarray, null, new File(workdir));
 
         BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = null;
@@ -126,7 +154,8 @@ public class FormController implements Initializable {
         int exitVal = process.waitFor();
         LOGGER.info("Exited with error code " + exitVal);
         if(exitVal > 0 ) {
-            JOptionPane.showMessageDialog(null, "Der Download ist fehlgeschlagen. Bitte Papa rufen ;-) ");
+            String message = "Der Aufruf des Prozesses '%s' ist fehlgeschlagen. Bitte Papa rufen ;-) ";
+            JOptionPane.showMessageDialog(null, String.format(message, cmdarray[0]));
         }
     }
 
