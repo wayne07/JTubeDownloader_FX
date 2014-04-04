@@ -91,10 +91,9 @@ public class FormController implements Initializable {
 
     private void extractAudioFrom(File tempFile, String filenameToSave, String targetDir) {
 //        String command = "ffmpeg -i $x -acodec libmp3lame -ac 2 -ab 128k -vn -y \"$2\"";
-        String finalFileName = String.format("'%s%s%s.mp3'", targetDir, separator, filenameToSave);
+        String finalFileName = String.format("%s.mp3", filenameToSave.trim());
         LOGGER.debug("finalFileName: " + finalFileName);
-
-        String[] cmdarray = new String[12];
+        String[] cmdarray = new String[14];
         cmdarray[0] = "ffmpeg";
         cmdarray[1] = "-i";
         cmdarray[2] = tempFile.getAbsolutePath();
@@ -104,9 +103,11 @@ public class FormController implements Initializable {
         cmdarray[6] = "2";
         cmdarray[7] = "-ab";
         cmdarray[8] = "128k";
-        cmdarray[9] = "-vn";
-        cmdarray[10] = "-y";
-        cmdarray[11] = finalFileName;
+        cmdarray[9] = "-f";
+        cmdarray[10] = "mp3";
+        cmdarray[11] = "-vn";
+        cmdarray[12] = "-y";
+        cmdarray[13] = finalFileName;
         try {
             executeProcess(cmdarray);
         } catch (IOException e) {
