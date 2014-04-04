@@ -7,8 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.paint.Color;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -25,7 +23,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static java.io.File.separator;
-import static javafx.scene.paint.Color.RED;
 
 /**
  * Created by js on 03.04.14.
