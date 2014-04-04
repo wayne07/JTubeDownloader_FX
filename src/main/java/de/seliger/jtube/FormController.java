@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.paint.Color;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -23,6 +25,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static java.io.File.separator;
+import static javafx.scene.paint.Color.RED;
 
 /**
  * Created by js on 03.04.14.
@@ -53,7 +56,6 @@ public class FormController implements Initializable {
         btnDownload.setDisable(true);
         btnDownload.setVisible(false);
         try {
-            // do download
             File tempFile = createTempFileName();
             doDownloadToTempFile(tempFile, urlToSave.getText());
             extractAudioFrom(tempFile, filename.getText(), targetDirectory.getText());
@@ -72,9 +74,6 @@ public class FormController implements Initializable {
 
         targetDirectory.setText(workdir);
         deleteVideo.setSelected(true);
-
-        urlToSave.setText("http://www.youtube.com/watch?v=COHQuu9Flho");
-        filename.setText("BROILERS - Ist Da Jemand");
     }
 
     private String getUserHome() {
