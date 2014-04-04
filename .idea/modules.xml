@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/JTubeDownloader_FX.iml" filepath="$PROJECT_DIR$/JTubeDownloader_FX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JTubeDownloader_FXClient/JTubeDownloader_FXClient.iml" filepath="$PROJECT_DIR$/JTubeDownloader_FXClient/JTubeDownloader_FXClient.iml" />
     </modules>
   </component>
 </project>
