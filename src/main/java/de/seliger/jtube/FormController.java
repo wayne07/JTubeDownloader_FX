@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import org.apache.log4j.Logger;
@@ -34,7 +35,7 @@ public class FormController implements Initializable {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyyMMdd").withLocale(Locale.GERMAN);
 
     @FXML
-    private TextField PathToDll;
+    private CheckBox deleteVideo;
     @FXML
     private TextField targetDirectory;
     @FXML
@@ -49,11 +50,20 @@ public class FormController implements Initializable {
     @FXML
     private void doDownload(MouseEvent event) {
         LOGGER.debug("starting Download ...");
-        // do download
-        File tempFile = createTempFileName();
-        doDownloadToTempFile(tempFile, urlToSave.getText());
-        extractAudioFrom(tempFile, filename.getText(), targetDirectory.getText());
-        deleteTempFile(tempFile);
+        btnDownload.setDisable(true);
+        btnDownload.setVisible(false);
+        try {
+            // do download
+            File tempFile = createTempFileName();
+            doDownloadToTempFile(tempFile, urlToSave.getText());
+            extractAudioFrom(tempFile, filename.getText(), targetDirectory.getText());
+            if (deleteVideo.isSelected()) {
+                deleteTempFile(tempFile);
+            }
+        } finally {
+            btnDownload.setDisable(false);
+            btnDownload.setVisible(true);
+        }
     }
 
     @Override
@@ -61,6 +71,8 @@ public class FormController implements Initializable {
         this.workdir = createTargetDirectory(getUserHome());
 
         targetDirectory.setText(workdir);
+        deleteVideo.setSelected(true);
+
         urlToSave.setText("http://www.youtube.com/watch?v=COHQuu9Flho");
         filename.setText("BROILERS - Ist Da Jemand");
     }
@@ -77,8 +89,8 @@ public class FormController implements Initializable {
         return target.getAbsolutePath();
     }
 
-    private void deleteTempFile(File tempFileName) {
-
+    private void deleteTempFile(File tempFile) {
+        tempFile.delete();
     }
 
     private File createTempFileName() {
